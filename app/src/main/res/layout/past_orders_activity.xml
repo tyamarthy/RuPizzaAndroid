@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFB6C1">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleLabel"
+        android:layout_width="277dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:background="#E91E63"
+        android:padding="10dp"
+        android:text="All Placed Orders"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Order Number -->
+    <TextView
+        android:id="@+id/tvOrderNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order Number:"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleLabel" />
+
+    <!-- Spinner -->
+
+    <!-- RecyclerView -->
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="279dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvOrderNumber" />
+
+    <!-- Cancel Order Button -->
+
+    <!-- Export Order Button -->
+
+    <!-- Back to Main Button -->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCartProducts"
+        android:layout_width="344dp"
+        android:layout_height="354dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@id/backButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.761"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner"
+        app:layout_constraintVertical_bias="0.006" />
+
+    <Button
+        android:id="@+id/btnRemovePizza"
+        android:layout_width="116dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="156dp"
+        android:backgroundTint="#E91E63"
+        android:text="Cancel Order"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnExportOrder"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnExportOrder"
+        android:layout_width="147dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="156dp"
+        android:backgroundTint="#E91E63"
+        android:text="Export Orders"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/backButton"
+        app:layout_constraintStart_toEndOf="@id/btnRemovePizza" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="#E91E63"
+        android:text="Back To Main"
+        app:layout_constraintStart_toEndOf="@id/btnExportOrder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- Order Total with Tax -->
+
+    <!-- Placeholder TextView -->
+
+    <TextView
+        android:id="@+id/tvOrderNumber3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="120dp"
+        android:text="Order Total w/ Tax:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rvCartProducts" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvOrderNumber3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
