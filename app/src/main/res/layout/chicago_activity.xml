@@ -1,116 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FFB6C1">
-    <!-- Title -->
-    <TextView
-        android:id="@+id/titleLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="#E91E63"
-        android:padding="10dp"
-        android:text="Chicago Style Pizza"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-    <!-- Spinner for Pizza Type -->
-    <Spinner
-        android:id="@+id/pizzaTypeSpinner"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
-    <!-- Radio Group for Sizes -->
-    <RadioGroup
-        android:id="@+id/sizeRadioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-        <RadioButton
-            android:id="@+id/smallRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Small" />
-        <RadioButton
-            android:id="@+id/mediumRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium" />
-        <RadioButton
-            android:id="@+id/largeRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large" />
-    </RadioGroup>
-    <!-- Crust Text -->
-    <TextView
-        android:id="@+id/crustTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Crust: Pan"
-        android:textSize="16sp"
-        android:layout_marginTop="10dp" />
-    <!-- Pizza Image -->
-    <ImageView
-        android:id="@+id/pizzaImageView"
-        android:layout_width="379dp"
-        android:layout_height="155dp"
-        android:layout_marginTop="10dp"
-        android:contentDescription="Pizza Image"
-        android:scaleType="centerCrop" />
-    <!-- RecyclerView for Available Toppings -->
-    <TextView
-        android:id="@+id/availableToppingsLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Available Toppings"
-        android:layout_marginTop="10dp" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/availableToppingsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="5dp" />
-    <!-- RecyclerView for Selected Toppings -->
-    <TextView
-        android:id="@+id/selectedToppingsLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Selected Toppings"
-        android:layout_marginTop="10dp" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/selectedToppingsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginTop="5dp" />
-    <!-- Price -->
-    <TextView
-        android:id="@+id/priceTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Price: $0.00"
-        android:layout_marginTop="10dp" />
-    <!-- Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:padding="16dp">
+
+        <!-- Back Button -->
         <Button
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#E91E63"
-            android:text="Back to Main" />
+            android:text="Back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/titlePizza"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Select Your Pizza"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backButton" />
+
+        <!-- Pizza Image -->
+        <ImageView
+            android:id="@+id/pizzaImageView"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Pizza image"
+            android:src="@drawable/pinkpizza"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titlePizza" />
+
+        <!-- Pizza Specialty Spinner -->
+        <Spinner
+            android:id="@+id/spinnerPizzaSpecialty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pizzaImageView" />
+
+        <!-- Pizza Type Spinner -->
+        <Spinner
+            android:id="@+id/spinnerPizzaType"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinnerPizzaSpecialty" />
+
+        <!-- Dynamic Crust TextView -->
+        <TextView
+            android:id="@+id/crustTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Crust: Thin"
+            android:textSize="16sp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinnerPizzaType" />
+
+        <!-- Radio Buttons for Sizes -->
+        <RadioGroup
+            android:id="@+id/radioGroupSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/crustTextView">
+
+            <RadioButton
+                android:id="@+id/radioSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Small" />
+
+            <RadioButton
+                android:id="@+id/radioMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medium" />
+
+            <RadioButton
+                android:id="@+id/radioLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Large" />
+        </RadioGroup>
+
+        <!-- ChipGroup for Toppings -->
+        <TextView
+            android:id="@+id/toppingsLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Available Toppings:"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/radioGroupSize" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupToppings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toppingsLabel" />
+
+        <!-- Price Label -->
+        <TextView
+            android:id="@+id/priceLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Price:"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chipGroupToppings" />
+
+        <!-- Price Value -->
+        <TextView
+            android:id="@+id/priceTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="$0.00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceLabel" />
+
+        <!-- Order Button -->
         <Button
             android:id="@+id/orderButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="#E91E63"
+            android:layout_marginTop="18dp"
             android:text="Order"
-            android:layout_marginLeft="10dp" />
-    </LinearLayout>
-</LinearLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
