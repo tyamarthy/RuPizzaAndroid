@@ -17,9 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import java.util.ArrayList;
 public class ChicagoActivity extends AppCompatActivity {
 
-    // Declare UI components
+  // Declare UI components
     private Spinner spinnerPizzaSpecialty;
     private Spinner spinnerPizzaType;
     private RadioGroup radioGroupPizzaSize;
@@ -33,6 +34,11 @@ public class ChicagoActivity extends AppCompatActivity {
     private double pizzaPrice = 0.0;
     private boolean isBuildYourOwn = false;  // Track if "Build Your Own" is selected
     private int selectedToppingCount = 0;  // Track the number of selected toppings
+    private ArrayList<Pizza> orders; // List to store pizzas in the order
+    private ArrayList<String> selectedToppings; // Store selected toppings
+
+    private ChicagoPizza chicagoPizzaFactory = new ChicagoPizza();
+    private Pizza currPizza;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +52,8 @@ public class ChicagoActivity extends AppCompatActivity {
         chipGroupToppings = findViewById(R.id.chipGroupToppings);
         crustTextView = findViewById(R.id.crustTextView);
         priceTextView = findViewById(R.id.priceTextView);
-
+        orders = new ArrayList<>(); // Initialize the orders list
+        selectedToppings = new ArrayList<>(); // Initialize toppings list
         // Set up Pizza Specialty Spinner
         setupPizzaSpecialtySpinner();
 
@@ -124,25 +131,21 @@ public class ChicagoActivity extends AppCompatActivity {
             Chip chip = new Chip(this);
             chip.setText(topping.name());
             chip.setCheckable(true);
-            chip.setChipIconResource(android.R.drawable.checkbox_on_background);
-            chip.setChipIconTintResource(android.R.color.darker_gray);
-
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
+                    selectedToppings.add(topping.name());
                     selectedToppingCount++;
                 } else {
+                    selectedToppings.remove(topping.name());
                     selectedToppingCount--;
                 }
 
                 if (selectedToppingCount > 7) {
-                    // Show a message and uncheck the last selected chip if limit is exceeded
                     Toast.makeText(ChicagoActivity.this, "You can select up to 7 toppings only.", Toast.LENGTH_SHORT).show();
-                    chip.setChecked(false);  // Uncheck the topping
-                    selectedToppingCount--;  // Decrease the topping count
+                    chip.setChecked(false);
+                    selectedToppingCount--;
                 }
-
-                // Disable further topping selection if the limit is reached
-                toggleToppingChips(isBuildYourOwn && selectedToppingCount < 7);
+                toggleToppingChips(selectedToppingCount < 7);
             });
 
             chipGroupToppings.addView(chip);
@@ -150,11 +153,9 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void toggleToppingChips(boolean isEnabled) {
-        // Toggle visibility and selection ability of toppings
         for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
             Chip chip = (Chip) chipGroupToppings.getChildAt(i);
-            chip.setEnabled(isEnabled && selectedToppingCount < 7);  // Enable or disable chips based on Build Your Own selection and topping count
-            chip.setVisibility(isEnabled ? View.VISIBLE : View.GONE);  // Show or hide chips based on Build Your Own selection
+            chip.setEnabled(isEnabled);
         }
     }
 
@@ -165,16 +166,6 @@ public class ChicagoActivity extends AppCompatActivity {
             Intent intent = new Intent(ChicagoActivity.this, MainActivity.class);
             startActivity(intent);
             finish(); // Optional: Closes the current activity
-        });
-    }
-
-    private void setupOrderButton() {
-        Button orderButton = findViewById(R.id.orderButton);
-        orderButton.setOnClickListener(v -> {
-            // Handle order placement
-            if (!isBuildYourOwn && chipGroupToppings.getCheckedChipIds().size() > 0) {
-                Toast.makeText(ChicagoActivity.this, "You can only select toppings for 'Build Your Own' pizza.", Toast.LENGTH_SHORT).show();
-            }
         });
     }
 
@@ -270,5 +261,57 @@ public class ChicagoActivity extends AppCompatActivity {
 
         // Update the price TextView
         priceTextView.setText(String.format("$%.2f", pizzaPrice));
+    }
+
+    private void setupOrderButton() {
+        Button orderButton = findViewById(R.id.orderButton);
+        orderButton.setOnClickListener(v -> {
+            if (selectedPizzaSize.isEmpty()) {
+                Toast.makeText(ChicagoActivity.this, "Please select a pizza size.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Pizza pizza = createPizza();
+            if (pizza != null) {
+                orders.add(pizza);
+                Toast.makeText(ChicagoActivity.this, "Pizza added to order!", Toast.LENGTH_SHORT).show();
+                resetSelections();
+            } else {
+                Toast.makeText(ChicagoActivity.this, "Failed to create pizza.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private Pizza createPizza() {
+        Pizza pizza;
+        switch (selectedPizzaSpecialty) {
+            case "Deluxe":
+                currPizza = chicagoPizzaFactory.createDeluxe();
+                break;
+            case "BBQ Chicken":
+                currPizza = chicagoPizzaFactory.createBBQChicken();
+                break;
+            case "Meatzza":
+                currPizza = chicagoPizzaFactory.createMeatzza();
+                break;
+            case "Build Your Own":
+                currPizza = chicagoPizzaFactory.createBuildYourOwn();
+                break;
+            default:
+                pizza = null;
+        }
+        return pizza;
+    }
+
+    private void resetSelections() {
+        // Reset all selections after adding a pizza
+        selectedPizzaSize = "";
+        radioGroupPizzaSize.clearCheck();
+        selectedToppingCount = 0;
+        selectedToppings.clear();
+        spinnerPizzaSpecialty.setSelection(0);
+        spinnerPizzaType.setSelection(0);
+        toggleToppingChips(false);
+        priceTextView.setText("$0.00");
     }
 }
