@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,26 +27,12 @@ public class ChicagoActivity extends AppCompatActivity {
     private TextView crustTextView;
     private TextView priceTextView;
 
-    // Enum for toppings
-    public enum Topping {
-        SAUSAGE,
-        PEPPERONI,
-        GREEN_PEPPER,
-        ONION,
-        MUSHROOM,
-        BBQ_CHICKEN,
-        CHEDDAR,
-        PROVOLONE,
-        BEEF,
-        HAM,
-        OLIVES,
-        PINEAPPLES,
-        JALAPENOS
-    }
-
     private String selectedPizzaType = "";
     private String selectedPizzaSize = "";
+    private String selectedPizzaSpecialty = "";
     private double pizzaPrice = 0.0;
+    private boolean isBuildYourOwn = false;  // Track if "Build Your Own" is selected
+    private int selectedToppingCount = 0;  // Track the number of selected toppings
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +76,8 @@ public class ChicagoActivity extends AppCompatActivity {
         spinnerPizzaSpecialty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Handle pizza specialty selection
+                selectedPizzaSpecialty = parentView.getItemAtPosition(position).toString();
+                updateCrustAndPrice();  // Update crust and price when specialty changes
             }
 
             @Override
@@ -110,7 +98,10 @@ public class ChicagoActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedPizzaType = parentView.getItemAtPosition(position).toString();
+                isBuildYourOwn = selectedPizzaType.equals("Build Your Own");  // Set to true if "Build Your Own" is selected
+                selectedToppingCount = 0;  // Reset topping count when pizza type changes
                 updateCrustAndPrice();
+                toggleToppingChips(isBuildYourOwn);  // Show/hide toppings based on selection
             }
 
             @Override
@@ -137,10 +128,33 @@ public class ChicagoActivity extends AppCompatActivity {
             chip.setChipIconTintResource(android.R.color.darker_gray);
 
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                // Handle the topping selection change
+                if (isChecked) {
+                    selectedToppingCount++;
+                } else {
+                    selectedToppingCount--;
+                }
+
+                if (selectedToppingCount > 7) {
+                    // Show a message and uncheck the last selected chip if limit is exceeded
+                    Toast.makeText(ChicagoActivity.this, "You can select up to 7 toppings only.", Toast.LENGTH_SHORT).show();
+                    chip.setChecked(false);  // Uncheck the topping
+                    selectedToppingCount--;  // Decrease the topping count
+                }
+
+                // Disable further topping selection if the limit is reached
+                toggleToppingChips(isBuildYourOwn && selectedToppingCount < 7);
             });
 
             chipGroupToppings.addView(chip);
+        }
+    }
+
+    private void toggleToppingChips(boolean isEnabled) {
+        // Toggle visibility and selection ability of toppings
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            chip.setEnabled(isEnabled && selectedToppingCount < 7);  // Enable or disable chips based on Build Your Own selection and topping count
+            chip.setVisibility(isEnabled ? View.VISIBLE : View.GONE);  // Show or hide chips based on Build Your Own selection
         }
     }
 
@@ -158,15 +172,50 @@ public class ChicagoActivity extends AppCompatActivity {
         Button orderButton = findViewById(R.id.orderButton);
         orderButton.setOnClickListener(v -> {
             // Handle order placement
+            if (!isBuildYourOwn && chipGroupToppings.getCheckedChipIds().size() > 0) {
+                Toast.makeText(ChicagoActivity.this, "You can only select toppings for 'Build Your Own' pizza.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void updateCrustAndPrice() {
-        // Update crust text
-        if (selectedPizzaType.equals("New York Pizza")) {
-            crustTextView.setText("Crust: Thin");
-        } else {
-            crustTextView.setText("Crust: Hand-Tossed");
+        // Update crust text based on pizza type and specialty
+        if (selectedPizzaType.equals("Chicago Pizza")) {
+            switch (selectedPizzaSpecialty) {
+                case "Deluxe":
+                    crustTextView.setText("Crust: Deep Dish");
+                    break;
+                case "BBQ":
+                    crustTextView.setText("Crust: Pan");
+                    break;
+                case "Meatzza":
+                    crustTextView.setText("Crust: Stuffed");
+                    break;
+                case "Build Your Own":
+                    crustTextView.setText("Crust: Pan");
+                    break;
+                default:
+                    crustTextView.setText("Crust: Unknown");
+                    break;
+            }
+        } else if (selectedPizzaType.equals("NYC Pizza")) {
+            switch (selectedPizzaSpecialty) {
+                case "Deluxe":
+                    crustTextView.setText("Crust: Brooklyn");
+                    break;
+                case "BBQ":
+                    crustTextView.setText("Crust: Thin");
+                    break;
+                case "Meatzza":
+                    crustTextView.setText("Crust: Hand Tossed");
+                    break;
+                case "Build Your Own":
+                    crustTextView.setText("Crust: Hand Tossed");
+                    break;
+                default:
+                    crustTextView.setText("Crust: Unknown");
+                    break;
+            }
         }
 
         // Update price
@@ -174,26 +223,52 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void calculateAndDisplayPrice() {
-        // Calculate the pizza price based on the selected type and size
-        if (selectedPizzaType.equals("New York Pizza")) {
-            if (selectedPizzaSize.equals("Small")) {
-                pizzaPrice = 12.99;
-            } else if (selectedPizzaSize.equals("Medium")) {
-                pizzaPrice = 14.99;
-            } else {
+        // Default base price
+        pizzaPrice = 0.0;
+
+        // Get the selected specialty and size
+        String selectedSpecialty = spinnerPizzaSpecialty.getSelectedItem().toString();
+        String selectedSize = selectedPizzaSize;
+
+        // Pricing based on pizza specialty and size
+        if (selectedSpecialty.equals("Deluxe")) {
+            if (selectedSize.equals("Small")) {
                 pizzaPrice = 16.99;
-            }
-        } else {
-            if (selectedPizzaSize.equals("Small")) {
-                pizzaPrice = 14.99;
-            } else if (selectedPizzaSize.equals("Medium")) {
-                pizzaPrice = 16.99;
-            } else {
+            } else if (selectedSize.equals("Medium")) {
                 pizzaPrice = 18.99;
+            } else if (selectedSize.equals("Large")) {
+                pizzaPrice = 20.99;
             }
+        } else if (selectedSpecialty.equals("BBQ Chicken")) {
+            if (selectedSize.equals("Small")) {
+                pizzaPrice = 14.99;
+            } else if (selectedSize.equals("Medium")) {
+                pizzaPrice = 16.99;
+            } else if (selectedSize.equals("Large")) {
+                pizzaPrice = 19.99;
+            }
+        } else if (selectedSpecialty.equals("Meatzza")) {
+            if (selectedSize.equals("Small")) {
+                pizzaPrice = 17.99;
+            } else if (selectedSize.equals("Medium")) {
+                pizzaPrice = 19.99;
+            } else if (selectedSize.equals("Large")) {
+                pizzaPrice = 21.99;
+            }
+        } else if (selectedSpecialty.equals("Build Your Own")) {
+            if (selectedSize.equals("Small")) {
+                pizzaPrice = 8.99;
+            } else if (selectedSize.equals("Medium")) {
+                pizzaPrice = 10.99;
+            } else if (selectedSize.equals("Large")) {
+                pizzaPrice = 12.99;
+            }
+
+            // Add price for toppings if "Build Your Own" is selected
+            pizzaPrice += selectedToppingCount * 1.69;
         }
 
-        // Display the price
+        // Update the price TextView
         priceTextView.setText(String.format("$%.2f", pizzaPrice));
     }
 }
