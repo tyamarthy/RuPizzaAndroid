@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">RuPizzaAndroid</string>
+    <string name="app_name">Ru Pizza</string>
+    <string-array name="pizza_specialties">
+        <item>New York Pizza</item>
+        <item>Chicago Pizza</item>
+    </string-array>
+
+    <string-array name="pizza_types">
+        <item>Deluxe</item>
+        <item>BBQ</item>
+        <item>Meatzza</item>
+        <item>Build Your Own</item>
+    </string-array>
 </resources>
