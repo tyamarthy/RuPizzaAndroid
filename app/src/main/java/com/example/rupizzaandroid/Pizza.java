@@ -163,6 +163,20 @@ public abstract class Pizza {
     }
 
     /**
+     * Removes a topping from the pizza.
+     *
+     * @param topping The topping to be removed.
+     * @return true if the topping was successfully removed, false otherwise.
+     */
+    public boolean removeTopping(Topping topping) {
+        if (toppings != null && toppings.contains(topping)) {
+            toppings.remove(topping);
+            return true;
+        }
+        return false; // Return false if the topping wasn't found
+    }
+
+    /**
      * Returns a string representation of the pizza, including its type, size, crust, and toppings.
      *
      * @return A string representation of the pizza.

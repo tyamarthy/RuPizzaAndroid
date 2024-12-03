@@ -20,5 +20,5 @@ public enum Topping {
     HAM,
     OLIVES,
     PINEAPPLES,
-    JALAPENOS
+    JALAPENOS;
 }
