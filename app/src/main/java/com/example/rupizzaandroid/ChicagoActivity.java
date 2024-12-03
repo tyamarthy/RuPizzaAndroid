@@ -300,7 +300,7 @@ public class ChicagoActivity extends AppCompatActivity {
             default:
                 pizza = null;
         }
-        return pizza;
+        return currPizza;
     }
 
     private void resetSelections() {
