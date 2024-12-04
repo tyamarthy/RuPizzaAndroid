@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Back Button -->
         <Button
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
@@ -18,20 +17,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Title -->
         <TextView
             android:id="@+id/titlePizza"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Select Your Pizza"
+            android:text="Select Your Chicago Pizza"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/backButton" />
 
-        <!-- Pizza Image -->
         <ImageView
             android:id="@+id/pizzaImageView"
             android:layout_width="0dp"
@@ -43,7 +40,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/titlePizza" />
 
-        <!-- Pizza Specialty Spinner -->
         <Spinner
             android:id="@+id/spinnerPizzaSpecialty"
             android:layout_width="0dp"
@@ -53,30 +49,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pizzaImageView" />
 
-        <!-- Pizza Type Spinner -->
-        <Spinner
-            android:id="@+id/spinnerPizzaType"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinnerPizzaSpecialty" />
-
-        <!-- Dynamic Crust TextView -->
         <TextView
             android:id="@+id/crustTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Crust: Thin"
             android:textSize="16sp"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinnerPizzaType" />
+            app:layout_constraintTop_toBottomOf="@id/spinnerPizzaSpecialty" />
 
-        <!-- Radio Buttons for Sizes -->
         <RadioGroup
             android:id="@+id/radioGroupSize"
             android:layout_width="0dp"
@@ -107,7 +90,6 @@
                 android:text="Large" />
         </RadioGroup>
 
-        <!-- ChipGroup for Toppings -->
         <TextView
             android:id="@+id/toppingsLabel"
             android:layout_width="0dp"
@@ -119,16 +101,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/radioGroupSize" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupToppings"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewToppings"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toppingsLabel" />
 
-        <!-- Price Label -->
         <TextView
             android:id="@+id/priceLabel"
             android:layout_width="0dp"
@@ -138,9 +119,8 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chipGroupToppings" />
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewToppings" />
 
-        <!-- Price Value -->
         <TextView
             android:id="@+id/priceTextView"
             android:layout_width="0dp"
@@ -153,7 +133,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/priceLabel" />
 
-        <!-- Order Button -->
         <Button
             android:id="@+id/orderButton"
             android:layout_width="wrap_content"

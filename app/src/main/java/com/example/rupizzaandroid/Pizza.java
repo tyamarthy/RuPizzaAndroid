@@ -189,12 +189,15 @@ public abstract class Pizza {
                 ", Toppings: " + this.getToppings().toString();
     }
 
-    public boolean removeTopping(Topping topping) {
-        if (toppings != null && toppings.contains(topping)) {
+    public void toggleTopping(Topping topping) {
+        if (toppings.contains(topping)) {
             toppings.remove(topping);
-            return true;
+        } else {
+            toppings.add(topping);
         }
-        return false; // Return false if the topping wasn't found
+        topping.toggleSelected();
     }
+
+
 
 }
