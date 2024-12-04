@@ -174,4 +174,13 @@ public abstract class Pizza {
                 ", Crust: " + this.getCrust() +
                 ", Toppings: " + this.getToppings().toString();
     }
+
+    public boolean removeTopping(Topping topping) {
+        if (toppings != null && toppings.contains(topping)) {
+            toppings.remove(topping);
+            return true;
+        }
+        return false; // Return false if the topping wasn't found
+    }
+
 }

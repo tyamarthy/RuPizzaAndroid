@@ -7,8 +7,27 @@
 
     <string-array name="pizza_types">
         <item>Deluxe</item>
-        <item>BBQ</item>
+        <item>BBQ Chicken</item>
         <item>Meatzza</item>
         <item>Build Your Own</item>
     </string-array>
+
+
+
+    <string-array name="toppings">
+        <item>Sausage</item>
+        <item>Pepperoni</item>
+        <item>Green Pepper</item>
+        <item>Onion</item>
+        <item>Mushroom</item>
+        <item>BBQ Chicken</item>
+        <item>Cheddar</item>
+        <item>Provolone</item>
+        <item>Beef</item>
+        <item>Ham</item>
+        <item>Olives</item>
+        <item>Pineapple</item>
+        <item>Jalapenos</item>
+    </string-array>
+
 </resources>
