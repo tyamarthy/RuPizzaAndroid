@@ -92,6 +92,10 @@ public class ChicagoActivity extends AppCompatActivity {
                 // Handle no selection (if needed)
             }
         });
+
+        // Trigger update for default selection
+        selectedPizzaSpecialty = spinnerPizzaSpecialty.getSelectedItem().toString();
+        updateCrustAndPrice();
     }
 
     private void setupPizzaTypeSpinner() {
@@ -116,7 +120,13 @@ public class ChicagoActivity extends AppCompatActivity {
                 // Handle no selection (if needed)
             }
         });
+
+        // Trigger update for default selection
+        selectedPizzaType = spinnerPizzaType.getSelectedItem().toString();
+        isBuildYourOwn = selectedPizzaType.equals("Build Your Own");
+        updateCrustAndPrice();
     }
+
 
     private void setupPizzaSizeRadioButtons() {
         radioGroupPizzaSize.setOnCheckedChangeListener((group, checkedId) -> {
@@ -133,24 +143,24 @@ public class ChicagoActivity extends AppCompatActivity {
             chip.setCheckable(true);
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    selectedToppings.add(topping.name());
-                    selectedToppingCount++;
+                    if (selectedToppingCount < 7) {
+                        selectedToppings.add(topping.name());
+                        selectedToppingCount++;
+                    } else {
+                        // Show error message when user tries to select more than 7 toppings
+                        Toast.makeText(ChicagoActivity.this, "No more than 7 toppings allowed.", Toast.LENGTH_SHORT).show();
+                        chip.setChecked(false); // Revert the selection
+                    }
                 } else {
                     selectedToppings.remove(topping.name());
                     selectedToppingCount--;
                 }
-
-                if (selectedToppingCount > 7) {
-                    Toast.makeText(ChicagoActivity.this, "You can select up to 7 toppings only.", Toast.LENGTH_SHORT).show();
-                    chip.setChecked(false);
-                    selectedToppingCount--;
-                }
-                toggleToppingChips(selectedToppingCount < 7);
             });
 
             chipGroupToppings.addView(chip);
         }
     }
+
 
     private void toggleToppingChips(boolean isEnabled) {
         for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
@@ -189,7 +199,7 @@ public class ChicagoActivity extends AppCompatActivity {
                     crustTextView.setText("Crust: Unknown");
                     break;
             }
-        } else if (selectedPizzaType.equals("NYC Pizza")) {
+        } else if (selectedPizzaType.equals("New York Pizza")) {
             switch (selectedPizzaSpecialty) {
                 case "Deluxe":
                     crustTextView.setText("Crust: Brooklyn");
@@ -230,7 +240,7 @@ public class ChicagoActivity extends AppCompatActivity {
             } else if (selectedSize.equals("Large")) {
                 pizzaPrice = 20.99;
             }
-        } else if (selectedSpecialty.equals("BBQ Chicken")) {
+        } else if (selectedSpecialty.equals("BBQ")) {
             if (selectedSize.equals("Small")) {
                 pizzaPrice = 14.99;
             } else if (selectedSize.equals("Medium")) {
@@ -288,7 +298,7 @@ public class ChicagoActivity extends AppCompatActivity {
             case "Deluxe":
                 currPizza = chicagoPizzaFactory.createDeluxe();
                 break;
-            case "BBQ Chicken":
+            case "BBQ":
                 currPizza = chicagoPizzaFactory.createBBQChicken();
                 break;
             case "Meatzza":
@@ -298,7 +308,7 @@ public class ChicagoActivity extends AppCompatActivity {
                 currPizza = chicagoPizzaFactory.createBuildYourOwn();
                 break;
             default:
-                pizza = null;
+                currPizza = null;
         }
         return currPizza;
     }
