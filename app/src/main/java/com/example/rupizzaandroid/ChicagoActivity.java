@@ -85,6 +85,7 @@ public class ChicagoActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedPizzaSpecialty = parentView.getItemAtPosition(position).toString();
                 updateCrustAndPrice();  // Update crust and price when specialty changes
+                setDefaultToppings(selectedPizzaSpecialty); // Set default toppings based on selected specialty
             }
 
             @Override
@@ -96,6 +97,18 @@ public class ChicagoActivity extends AppCompatActivity {
         // Trigger update for default selection
         selectedPizzaSpecialty = spinnerPizzaSpecialty.getSelectedItem().toString();
         updateCrustAndPrice();
+        setDefaultToppings(selectedPizzaSpecialty); // Set default toppings initially
+    }
+
+    private void clearToppings() {
+        // Remove all existing toppings before adding default ones
+        selectedToppings.clear();
+        selectedToppingCount = 0;
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            chip.setChecked(false);
+            chip.setEnabled(true); // Re-enable the chips so they are editable
+        }
     }
 
     private void setupPizzaTypeSpinner() {
@@ -111,8 +124,12 @@ public class ChicagoActivity extends AppCompatActivity {
                 selectedPizzaType = parentView.getItemAtPosition(position).toString();
                 isBuildYourOwn = selectedPizzaType.equals("Build Your Own");  // Set to true if "Build Your Own" is selected
                 selectedToppingCount = 0;  // Reset topping count when pizza type changes
+                selectedToppings.clear();  // Clear the selected toppings list
                 updateCrustAndPrice();
                 toggleToppingChips(isBuildYourOwn);  // Show/hide toppings based on selection
+
+                // Reset toppings based on pizza type change
+                resetToppingChips(); // Ensure topping chips are correctly reset when switching pizza types
             }
 
             @Override
@@ -127,6 +144,18 @@ public class ChicagoActivity extends AppCompatActivity {
         updateCrustAndPrice();
     }
 
+    private void resetToppingChips() {
+        // Disable all topping chips if not "Build Your Own"
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            chip.setChecked(false);  // Uncheck all chips
+            chip.setEnabled(isBuildYourOwn);  // Enable only if "Build Your Own" is selected
+        }
+        selectedToppingCount = 0; // Reset topping count when switching pizza types
+        selectedToppings.clear(); // Clear the topping list
+    }
+
+
 
     private void setupPizzaSizeRadioButtons() {
         radioGroupPizzaSize.setOnCheckedChangeListener((group, checkedId) -> {
@@ -137,17 +166,21 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void setupToppingChips() {
+        // Clear any previous chips
+        chipGroupToppings.removeAllViews();
+
+        // Set up the chips for toppings
         for (final Topping topping : Topping.values()) {
             Chip chip = new Chip(this);
             chip.setText(topping.name());
             chip.setCheckable(true);
+
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
                     if (selectedToppingCount < 7) {
                         selectedToppings.add(topping.name());
                         selectedToppingCount++;
                     } else {
-                        // Show error message when user tries to select more than 7 toppings
                         Toast.makeText(ChicagoActivity.this, "No more than 7 toppings allowed.", Toast.LENGTH_SHORT).show();
                         chip.setChecked(false); // Revert the selection
                     }
@@ -159,13 +192,59 @@ public class ChicagoActivity extends AppCompatActivity {
 
             chipGroupToppings.addView(chip);
         }
+
+        // Set default toppings based on the selected specialty
+        setDefaultToppings(selectedPizzaSpecialty);
+    }
+
+    private void setDefaultToppings(String specialty) {
+        // Automatically select toppings based on the selected specialty
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            String toppingName = chip.getText().toString();
+
+            boolean isToppingSelected = false;
+
+            // Check which toppings should be selected based on specialty pizza
+            if (specialty.equals("BBQ")) {
+                isToppingSelected = toppingName.equals("BBQ Chicken") || toppingName.equals("Green Pepper")
+                        || toppingName.equals("Provolone") || toppingName.equals("Cheddar");
+            }
+            // Add other specialties if needed, e.g., "Deluxe", "Meatzza", etc.
+            else if (specialty.equals("Deluxe")) {
+                isToppingSelected = toppingName.equals("Sausage") || toppingName.equals("Pepperoni")
+                        || toppingName.equals("Green Pepper") || toppingName.equals("Onion")
+                        || toppingName.equals("Mushroom");
+            }
+            else if (specialty.equals("Meatzza")) {
+                isToppingSelected = toppingName.equals("Sausage") || toppingName.equals("Pepperoni")
+                        || toppingName.equals("Beef") || toppingName.equals("Ham");
+            }
+            else if (specialty.equals("Build Your Own")) {
+                return;  // No default toppings for "Build Your Own"
+            }
+
+            // If the topping should be selected, do it and disable it
+            if (isToppingSelected) {
+                chip.setChecked(true);
+                chip.setEnabled(false); // Disable the chip so the user can't uncheck it
+                selectedToppings.add(toppingName);  // Add the selected topping to the list
+                selectedToppingCount++;
+            } else {
+                chip.setEnabled(true); // Enable the chip for user selection if not part of default
+            }
+        }
     }
 
 
     private void toggleToppingChips(boolean isEnabled) {
         for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
             Chip chip = (Chip) chipGroupToppings.getChildAt(i);
-            chip.setEnabled(isEnabled);
+            if (!isBuildYourOwn) {
+                chip.setEnabled(false); // Disable all chips if pizza is not "Build Your Own"
+            } else {
+                chip.setEnabled(true); // Enable chips only if "Build Your Own" is selected
+            }
         }
     }
 
