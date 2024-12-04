@@ -36,12 +36,34 @@ public class ToppingAdapter extends RecyclerView.Adapter<ToppingAdapter.ToppingV
     public void onBindViewHolder(@NonNull ToppingViewHolder holder, int position) {
         Topping topping = toppings.get(position);
         holder.textView.setText(topping.toString());
-        holder.itemView.setOnClickListener(v -> listener.onToppingClick(topping));
+
+        // Highlight selected toppings
+        if (topping.isSelected()) {
+            holder.textView.setBackgroundColor(holder.itemView.getContext()
+                    .getResources().getColor(android.R.color.holo_blue_light)); // Highlight color
+        } else {
+            holder.textView.setBackgroundColor(holder.itemView.getContext()
+                    .getResources().getColor(android.R.color.transparent)); // Default color
+        }
+
+        holder.itemView.setOnClickListener(v -> {
+            listener.onToppingClick(topping);
+            notifyItemChanged(position); // Update the view for selection state change
+        });
     }
 
     @Override
     public int getItemCount() {
         return toppings.size();
+    }
+
+    static class ToppingViewHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+
+        ToppingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            textView = itemView.findViewById(android.R.id.text1);
+        }
     }
 
     public void addTopping(Topping topping) {
@@ -66,14 +88,5 @@ public class ToppingAdapter extends RecyclerView.Adapter<ToppingAdapter.ToppingV
         int startPosition = toppings.size();
         toppings.addAll(newToppings);
         notifyItemRangeInserted(startPosition, newToppings.size());
-    }
-
-    static class ToppingViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-
-        ToppingViewHolder(@NonNull View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(android.R.id.text1);
-        }
     }
 }

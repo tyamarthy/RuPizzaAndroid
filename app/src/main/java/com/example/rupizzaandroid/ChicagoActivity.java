@@ -36,6 +36,8 @@ public class ChicagoActivity extends AppCompatActivity {
     private Button addToppingButton;
     private Button removeToppingButton;
 
+    private static final int MAX_TOPPINGS_LIMIT = 6;
+
     private Pizza currPizza;
     private ChicagoPizza chicagoPizzaFactory = new ChicagoPizza();
     private Order currentOrder;
@@ -116,29 +118,34 @@ public class ChicagoActivity extends AppCompatActivity {
     private void setupRecyclerViews() {
         availableToppingsAdapter = new ToppingAdapter(availableToppings, topping -> {
             if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
-                if (selectedToppingsAdapter.getItemCount() > 6) {
-                    showAlert("Toppings Limit Reached", "You are only allowed to select up to 7 toppings.");
-                    return;
+                if (topping.isSelected()) {
+                    // Deselect topping
+                    topping.setSelected(false);
+                    selectedToppingsAdapter.removeTopping(topping);
+                    currPizza.getToppings().remove(topping);
+                } else {
+                    // Select topping
+                    if (selectedToppingsAdapter.getItemCount() >= 7) {
+                        showAlert("Toppings Limit Reached", "You are only allowed to select up to 7 toppings.");
+                        return;
+                    }
+                    topping.setSelected(true);
+                    selectedToppingsAdapter.addTopping(topping);
+                    currPizza.addTopping(topping);
                 }
-                selectedToppingsAdapter.addTopping(topping);
-                availableToppingsAdapter.removeTopping(topping);
-                currPizza.addTopping(topping);
                 updatePrice();
+                availableToppingsAdapter.notifyDataSetChanged(); // Refresh the UI
             }
         });
 
         selectedToppingsAdapter = new ToppingAdapter(new ArrayList<>(), topping -> {
-            if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
-                availableToppingsAdapter.addTopping(topping);
-                selectedToppingsAdapter.removeTopping(topping);
-                currPizza.getToppings().remove(topping);
-                updatePrice();
-            }
+            // No direct action for selected toppings adapter in this design
         });
 
         availableToppingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         availableToppingsRecyclerView.setAdapter(availableToppingsAdapter);
     }
+
 
     private void setupButtons() {
         backButton.setOnClickListener(v -> {
@@ -151,19 +158,28 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void updatePizzaSelection(String pizzaType) {
-        availableToppingsAdapter.clearToppings();
-        availableToppingsAdapter.addAllToppings(availableToppings);
+        // Reset all toppings
+        for (Topping topping : availableToppings) {
+            topping.setSelected(false);
+        }
+        availableToppingsAdapter.notifyDataSetChanged();
+
+        // Clear selected toppings
         selectedToppingsAdapter.clearToppings();
 
+        // Create pizza based on selection
         switch (pizzaType) {
             case "Deluxe":
                 currPizza = chicagoPizzaFactory.createDeluxe();
+                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
                 break;
             case "BBQ Chicken":
                 currPizza = chicagoPizzaFactory.createBBQChicken();
+                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
                 break;
             case "Meatzza":
                 currPizza = chicagoPizzaFactory.createMeatzza();
+                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
                 break;
             case "Build your own":
                 currPizza = chicagoPizzaFactory.createBuildYourOwn();
@@ -175,16 +191,12 @@ public class ChicagoActivity extends AppCompatActivity {
 
         crustTextView.setText("Crust: " + currPizza.getCrust());
 
-        if (!pizzaType.equals("Build your own")) {
-            selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
-        }
-
+        // Reset size and price
         smallRadioButton.setChecked(false);
         mediumRadioButton.setChecked(false);
         largeRadioButton.setChecked(false);
         updatePrice();
     }
-
 
 
     private void updatePrice() {
