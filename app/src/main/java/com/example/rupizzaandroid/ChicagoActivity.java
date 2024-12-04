@@ -28,6 +28,7 @@ public class ChicagoActivity extends AppCompatActivity {
     private TextView crustTextView;
     private TextView priceTextView;
 
+
     private String selectedPizzaType = "";
     private String selectedPizzaSize = "";
     private String selectedPizzaSpecialty = "";
@@ -84,7 +85,8 @@ public class ChicagoActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedPizzaSpecialty = parentView.getItemAtPosition(position).toString();
-                updateCrustAndPrice(); // Update crust and price when specialty changes
+                updateCrustAndPrice();  // Update crust and price when specialty changes
+                setDefaultToppings(selectedPizzaSpecialty); // Set default toppings based on selected specialty
             }
 
             @Override
@@ -92,6 +94,25 @@ public class ChicagoActivity extends AppCompatActivity {
                 // Handle no selection (if needed)
             }
         });
+
+        // Trigger update for default selection
+        selectedPizzaSpecialty = spinnerPizzaSpecialty.getSelectedItem().toString();
+        updateCrustAndPrice();
+        setDefaultToppings(selectedPizzaSpecialty); // Set default toppings initially
+    }
+    private boolean shouldPreserveToppings = false;
+
+    private void clearToppings() {
+        // Only clear the toppings if toppings are not being preserved
+        if (!shouldPreserveToppings) {
+            selectedToppings.clear();
+            selectedToppingCount = 0;
+            for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+                Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+                chip.setChecked(false);
+                chip.setEnabled(true); // Re-enable the chips so they are editable
+            }
+        }
     }
 
     private void setupPizzaTypeSpinner() {
@@ -109,6 +130,8 @@ public class ChicagoActivity extends AppCompatActivity {
                 selectedToppingCount = 0; // Reset topping count when pizza type changes
                 updateCrustAndPrice();
                 toggleToppingChips(isBuildYourOwn); // Show/hide toppings based on selection
+                String selectedType = parentView.getItemAtPosition(position).toString();
+                setDefaultToppings(selectedType);  // Set toppings based on the selected pizza type
             }
 
             @Override
@@ -116,7 +139,25 @@ public class ChicagoActivity extends AppCompatActivity {
                 // Handle no selection (if needed)
             }
         });
+
+        // Trigger update for default selection
+        selectedPizzaType = spinnerPizzaType.getSelectedItem().toString();
+        isBuildYourOwn = selectedPizzaType.equals("Build Your Own");
+        updateCrustAndPrice();
     }
+
+    private void resetToppingChips() {
+        // Disable all topping chips if not "Build Your Own"
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            chip.setChecked(false);  // Uncheck all chips
+            chip.setEnabled(isBuildYourOwn);  // Enable only if "Build Your Own" is selected
+        }
+        selectedToppingCount = 0; // Reset topping count when switching pizza types
+        selectedToppings.clear(); // Clear the topping list
+    }
+
+
 
     private void setupPizzaSizeRadioButtons() {
         radioGroupPizzaSize.setOnCheckedChangeListener((group, checkedId) -> {
@@ -136,11 +177,27 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void setupToppingChips() {
+        // Clear any previous chips
+        chipGroupToppings.removeAllViews();
+
+        // Set up the chips for toppings
         for (final Topping topping : Topping.values()) {
             Chip chip = new Chip(this);
             chip.setText(topping.name());
             chip.setCheckable(true);
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    if (selectedToppingCount < 7) {
+                        selectedToppings.add(topping.name());
+                        selectedToppingCount++;
+                    } else {
+                        Toast.makeText(ChicagoActivity.this, "No more than 7 toppings allowed.", Toast.LENGTH_SHORT).show();
+                        chip.setChecked(false); // Revert the selection
+                    }
+                } else {
+                    selectedToppings.remove(topping.name());
+                    selectedToppingCount--;
+                }
                 if (isBuildYourOwn) {
                     if (isChecked) {
                         if (selectedToppingCount < 7) {
@@ -170,6 +227,113 @@ public class ChicagoActivity extends AppCompatActivity {
         }
     }
 
+    private void setDefaultToppings(String type) {
+        // Determine if we need to reset the toppings
+        boolean shouldResetToppings = !selectedPizzaSpecialty.equals(type);
+
+        // Set the preserve toppings flag based on specialty/type changes
+        shouldPreserveToppings = !shouldResetToppings;  // Keep toppings if not changing specialty
+
+        // Clear previous selections only when switching to a new specialty
+        if (shouldResetToppings) {
+            clearToppings();
+        }
+
+        selectedPizzaSpecialty = type;
+
+        // Set toppings based on the selected specialty
+        switch (type) {
+            case "Deluxe":
+                selectAndLockToppings(new Topping[] {
+                        Topping.BBQ_CHICKEN,
+                        Topping.CHEDDAR,
+                        Topping.PROVOLONE,
+                        Topping.BEEF,
+                        Topping.HAM,
+                        Topping.OLIVES,
+                        Topping.PINEAPPLES,
+                        Topping.JALAPENOS
+                });
+                break;
+            case "BBQ":
+                selectAndLockToppings(new Topping[] {
+                        Topping.SAUSAGE,
+                        Topping.PEPPERONI,
+                        Topping.ONION,
+                        Topping.MUSHROOM,
+                        Topping.BEEF,
+                        Topping.HAM,
+                        Topping.OLIVES,
+                        Topping.PINEAPPLES,
+                        Topping.JALAPENOS
+                });
+                break;
+            case "Meatzza":
+                selectAndLockToppings(new Topping[] {
+                        Topping.GREEN_PEPPER,
+                        Topping.ONION,
+                        Topping.MUSHROOM,
+                        Topping.BBQ_CHICKEN,
+                        Topping.CHEDDAR,
+                        Topping.PROVOLONE,
+                        Topping.OLIVES,
+                        Topping.PINEAPPLES,
+                        Topping.JALAPENOS
+                });
+                break;
+            case "Build Your Own":
+                enableAllToppingsForCustom();
+                break;
+            default:
+                clearToppings();  // In case of an unknown type, clear toppings
+                break;
+        }
+    }
+
+    private void selectAndLockToppings(Topping[] toppings) {
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            String toppingName = chip.getText().toString();
+            Topping topping = Topping.valueOf(toppingName.replace(" ", "_").toUpperCase()); // Convert chip text to Topping enum
+
+            // Check if the topping is part of the pre-selected list
+            boolean shouldSelectTopping = false;
+            for (Topping preselectedTopping : toppings) {
+                if (topping == preselectedTopping) {
+                    shouldSelectTopping = true;
+                    break;
+                }
+            }
+
+            // Pre-select and lock the topping if it is part of the pre-selected list
+            chip.setChecked(shouldSelectTopping);
+            chip.setEnabled(!shouldSelectTopping);  // Disable (lock) the topping if it is pre-selected
+        }
+    }
+
+    private void enableAllToppingsForCustom() {
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            chip.setEnabled(true);  // Enable all toppings
+            chip.setChecked(false);  // Deselect all toppings initially
+        }
+
+        selectedToppings.clear();  // Clear any previous selections
+        selectedToppingCount = 0;
+    }
+
+    private void toggleToppingChips(boolean isEnabled) {
+        for (int i = 0; i < chipGroupToppings.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupToppings.getChildAt(i);
+            if (!isEnabled) {
+                chip.setEnabled(false); // Disable all chips if pizza is not "Build Your Own"
+            } else {
+                chip.setEnabled(true); // Enable chips only if "Build Your Own" is selected
+            }
+        }
+    }
+
+
     private void setupBackButton() {
         Button backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> {
@@ -180,21 +344,32 @@ public class ChicagoActivity extends AppCompatActivity {
         });
     }
 
+    private void setupOrderButton() {
+        Button orderButton = findViewById(R.id.orderButton);
+        orderButton.setOnClickListener(v -> {
+            // Handle order placement
+        });
+    }
+
     private void updateCrustAndPrice() {
         // Update crust text based on pizza type and specialty
         if (selectedPizzaSpecialty.equals("Chicago Pizza")) {
             switch (selectedPizzaType) {
                 case "Deluxe":
                     crustTextView.setText("Crust: Deep Dish");
+                    setDefaultToppings("Deluxe");
                     break;
                 case "BBQ Chicken":
                     crustTextView.setText("Crust: Pan");
+                    setDefaultToppings("BBQ");
                     break;
                 case "Meatzza":
                     crustTextView.setText("Crust: Stuffed");
+                    setDefaultToppings("Meatzza");
                     break;
                 case "Build Your Own":
                     crustTextView.setText("Crust: Pan");
+                    setDefaultToppings("Build Your Own");
                     break;
                 default:
                     crustTextView.setText("Crust: Unknown");
@@ -295,8 +470,7 @@ public class ChicagoActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(ChicagoActivity.this, "Failed to create pizza.", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
+        }
 
     private Pizza createPizza() {
         Pizza pizza;
