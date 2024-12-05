@@ -36,7 +36,7 @@ public class ChicagoActivity extends AppCompatActivity {
     private Button addToppingButton;
     private Button removeToppingButton;
 
-    private static final int MAX_TOPPINGS_LIMIT = 6;
+    private static final int MAX_TOPPINGS_LIMIT = 7;
 
     private Pizza currPizza;
     private ChicagoPizza chicagoPizzaFactory = new ChicagoPizza();
