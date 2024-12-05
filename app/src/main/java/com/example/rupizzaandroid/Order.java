@@ -100,12 +100,6 @@ public class Order {
      * Adds the order to the static list of all orders placed.
      * This method ensures that only one instance of the order is added.
      */
-    //public void placeOrder() {
-     //   if (!allOrders.contains(this)) {
-      //    allOrders.add(this);  // Add this order to the list of all orders
-      //  }
-      // orderCounter++;
-    //}
     public void placeOrder() {
         if (!orderPlaced) {
             orderPlaced = true;
