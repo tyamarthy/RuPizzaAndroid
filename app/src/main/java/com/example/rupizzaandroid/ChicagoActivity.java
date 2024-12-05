@@ -123,29 +123,76 @@ public class ChicagoActivity extends AppCompatActivity {
                     topping.setSelected(false);
                     selectedToppingsAdapter.removeTopping(topping);
                     currPizza.getToppings().remove(topping);
+
+                    // Check if no toppings are selected and reset image if true
+                    if (currPizza.getToppings().isEmpty()) {
+                        pizzaImageView.setImageResource(R.drawable.buildyourown);
+                    }
                 } else {
                     // Select topping
-                    if (selectedToppingsAdapter.getItemCount() >= 7) {
-                        showAlert("Toppings Limit Reached", "You are only allowed to select up to 7 toppings.");
+                    if (selectedToppingsAdapter.getItemCount() >= MAX_TOPPINGS_LIMIT) {
+                        showAlert("Toppings Limit Reached", "You are only allowed to select up to " + MAX_TOPPINGS_LIMIT + " toppings.");
                         return;
                     }
                     topping.setSelected(true);
                     selectedToppingsAdapter.addTopping(topping);
                     currPizza.addTopping(topping);
                 }
+
+                // Update the pizza image and price
+                updateBuildYourOwnImage();
                 updatePrice();
                 availableToppingsAdapter.notifyDataSetChanged(); // Refresh the UI
             }
+        }, imageResId -> {
+            pizzaImageView.setImageResource(imageResId);
         });
 
         selectedToppingsAdapter = new ToppingAdapter(new ArrayList<>(), topping -> {
             // No direct action for selected toppings adapter in this design
+        }, imageResId -> {
+            pizzaImageView.setImageResource(imageResId);
         });
 
         availableToppingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         availableToppingsRecyclerView.setAdapter(availableToppingsAdapter);
     }
 
+    private void updateBuildYourOwnImage() {
+        if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
+            List<Topping> selectedToppings = currPizza.getToppings();
+
+            if (selectedToppings.isEmpty()) {
+                // No toppings selected, reset to default image
+                pizzaImageView.setImageResource(R.drawable.buildyourown);
+            } else {
+                // Show the image for the most recently added topping
+                Topping lastTopping = selectedToppings.get(selectedToppings.size() - 1);
+                int toppingImageResource = getToppingImageResource(lastTopping);
+                pizzaImageView.setImageResource(toppingImageResource);
+            }
+        }
+    }
+
+
+    private int getToppingImageResource(Topping topping) {
+        switch (topping) {
+            case SAUSAGE: return R.drawable.sausage;
+            case PEPPERONI: return R.drawable.pepperoni;
+            case GREEN_PEPPER: return R.drawable.greenpepper;
+            case ONION: return R.drawable.onion;
+            case MUSHROOM: return R.drawable.mushroom;
+            case BBQ_CHICKEN: return R.drawable.bbqchicken;
+            case CHEDDAR: return R.drawable.cheddar;
+            case PROVOLONE: return R.drawable.provolone;
+            case BEEF: return R.drawable.beef;
+            case HAM: return R.drawable.ham;
+            case OLIVES: return R.drawable.olives;
+            case PINEAPPLES: return R.drawable.pineapple;
+            case JALAPENOS: return R.drawable.jalapenos;
+            default: return R.drawable.buildyourown; // Fallback default image
+        }
+    }
 
     private void setupButtons() {
         backButton.setOnClickListener(v -> {
@@ -172,24 +219,29 @@ public class ChicagoActivity extends AppCompatActivity {
             case "Deluxe":
                 currPizza = chicagoPizzaFactory.createDeluxe();
                 selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                pizzaImageView.setImageResource(R.drawable.deluxe);  // Set the image for Deluxe
                 break;
             case "BBQ Chicken":
                 currPizza = chicagoPizzaFactory.createBBQChicken();
                 selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                pizzaImageView.setImageResource(R.drawable.bbqchicken);  // Set the image for BBQ Chicken
                 break;
             case "Meatzza":
                 currPizza = chicagoPizzaFactory.createMeatzza();
                 selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                pizzaImageView.setImageResource(R.drawable.meatzza);  // Set the image for Meatzza
                 break;
             case "Build your own":
                 currPizza = chicagoPizzaFactory.createBuildYourOwn();
+                pizzaImageView.setImageResource(R.drawable.buildyourown);  // Default image for Build Your Own
                 break;
             default:
                 currPizza = null;
-                return;
+                pizzaImageView.setImageResource(R.drawable.pinkpizza);  // Fallback default image
+                break;
         }
 
-        crustTextView.setText("Crust: " + currPizza.getCrust());
+        crustTextView.setText("Crust: " + (currPizza != null ? currPizza.getCrust() : ""));
 
         // Reset size and price
         smallRadioButton.setChecked(false);
@@ -197,7 +249,6 @@ public class ChicagoActivity extends AppCompatActivity {
         largeRadioButton.setChecked(false);
         updatePrice();
     }
-
 
     private void updatePrice() {
         double price = 0.0;

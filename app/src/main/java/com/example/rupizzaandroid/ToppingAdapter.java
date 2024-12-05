@@ -12,17 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ToppingAdapter extends RecyclerView.Adapter<ToppingAdapter.ToppingViewHolder> {
+    private final OnToppingImageChangeListener imageListener;
     private List<Topping> toppings;
     private OnToppingClickListener listener;
+    private boolean isBuildYourOwn;
 
     public interface OnToppingClickListener {
         void onToppingClick(Topping topping);
     }
 
-    public ToppingAdapter(List<Topping> toppings, OnToppingClickListener listener) {
+    public ToppingAdapter(List<Topping> toppings, OnToppingClickListener listener, OnToppingImageChangeListener imageListener) {
         this.toppings = new ArrayList<>(toppings);
         this.listener = listener;
+        this.imageListener = imageListener;
     }
+
+    public interface OnToppingImageChangeListener {
+        void onToppingImageChange(int imageResId);
+    }
+
 
     @NonNull
     @Override
@@ -37,7 +45,7 @@ public class ToppingAdapter extends RecyclerView.Adapter<ToppingAdapter.ToppingV
         Topping topping = toppings.get(position);
         holder.textView.setText(topping.toString());
 
-        // Highlight selected toppings
+        // Set the background color based on selection
         if (topping.isSelected()) {
             holder.textView.setBackgroundColor(holder.itemView.getContext()
                     .getResources().getColor(android.R.color.holo_blue_light)); // Highlight color
@@ -46,11 +54,29 @@ public class ToppingAdapter extends RecyclerView.Adapter<ToppingAdapter.ToppingV
                     .getResources().getColor(android.R.color.transparent)); // Default color
         }
 
+        // Notify the image listener when the topping is clicked
         holder.itemView.setOnClickListener(v -> {
             listener.onToppingClick(topping);
+            if (topping.isSelected()) {
+                imageListener.onToppingImageChange(topping.getImageResId()); // Change image to topping image
+            } else {
+                // Check if all toppings are deselected
+                boolean allDeselected = true;
+                for (Topping t : toppings) {
+                    if (t.isSelected()) {
+                        allDeselected = false;
+                        break;
+                    }
+                }
+
+                if (allDeselected) {
+                    imageListener.onToppingImageChange(R.drawable.buildyourown); // Default image
+                }
+            }
             notifyItemChanged(position); // Update the view for selection state change
         });
     }
+
 
     @Override
     public int getItemCount() {
