@@ -216,38 +216,56 @@ public class ChicagoActivity extends AppCompatActivity {
     }
 
     private void updatePizzaSelection(String pizzaType) {
-        // Reset all toppings
+        // Reset all toppings to unselected and uneditable
         for (Topping topping : availableToppings) {
             topping.setSelected(false);
+            topping.setEditable(false); // Disable editing by default
         }
         availableToppingsAdapter.notifyDataSetChanged();
 
         // Clear selected toppings
         selectedToppingsAdapter.clearToppings();
 
+        // Handle pizza selection logic
         switch (pizzaType) {
             case "Deluxe":
                 currPizza = chicagoPizzaFactory.createDeluxe();
-                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                highlightSpecialtyToppings(List.of(
+                        Topping.SAUSAGE, Topping.PEPPERONI, Topping.GREEN_PEPPER,
+                        Topping.ONION, Topping.MUSHROOM
+                ));
                 pizzaImageView.setImageResource(R.drawable.deluxe); // Deluxe image
                 break;
+
             case "BBQ Chicken":
                 currPizza = chicagoPizzaFactory.createBBQChicken();
-                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                highlightSpecialtyToppings(List.of(
+                        Topping.BBQ_CHICKEN, Topping.GREEN_PEPPER,
+                        Topping.PROVOLONE, Topping.CHEDDAR
+                ));
                 pizzaImageView.setImageResource(R.drawable.bbqchicken); // BBQ Chicken image
                 break;
+
             case "Meatzza":
                 currPizza = chicagoPizzaFactory.createMeatzza();
-                selectedToppingsAdapter.addAllToppings(currPizza.getToppings());
+                highlightSpecialtyToppings(List.of(
+                        Topping.SAUSAGE, Topping.PEPPERONI, Topping.BEEF,
+                        Topping.HAM
+                ));
                 pizzaImageView.setImageResource(R.drawable.meatzza); // Meatzza image
                 break;
+
             case "Build your own":
                 currPizza = chicagoPizzaFactory.createBuildYourOwn();
-                pizzaImageView.setImageResource(R.drawable.buildyourown); // Default image
+                for (Topping topping : availableToppings) {
+                    topping.setEditable(true); // Make all toppings editable
+                }
+                pizzaImageView.setImageResource(R.drawable.buildyourown); // Default image for Build Your Own
                 break;
+
             default:
                 currPizza = null;
-                pizzaImageView.setImageResource(R.drawable.pinkpizza); // Default fallback
+                pizzaImageView.setImageResource(R.drawable.pinkpizza); // Default fallback image
                 break;
         }
 
@@ -260,6 +278,18 @@ public class ChicagoActivity extends AppCompatActivity {
         updatePrice();
     }
 
+    private void highlightSpecialtyToppings(List<Topping> specialtyToppings) {
+        for (Topping topping : availableToppings) {
+            if (specialtyToppings.contains(topping)) {
+                topping.setSelected(true); // Preselect these toppings
+                topping.setEditable(false); // Lock these toppings to make them uneditable
+                selectedToppingsAdapter.addTopping(topping); // Show them in the selected toppings list
+            } else {
+                topping.setSelected(false); // Ensure other toppings are not selected
+            }
+        }
+        availableToppingsAdapter.notifyDataSetChanged(); // Refresh the UI
+    }
 
     private void updatePrice() {
         double price = 0.0;

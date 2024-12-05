@@ -22,8 +22,9 @@ public enum Topping {
     PINEAPPLES(R.drawable.pineapple),
     JALAPENOS(R.drawable.jalapenos);
 
-
+    private final int imageResId;
     private boolean isSelected = false;
+    private boolean isEditable;
 
     // Method to get the selection status
     public boolean isSelected() {
@@ -39,8 +40,6 @@ public enum Topping {
         isSelected = !isSelected;
     }
 
-    private final int imageResId;
-
     Topping(int imageResId) {
         this.imageResId = imageResId;
     }
@@ -49,4 +48,11 @@ public enum Topping {
         return imageResId;
     }
 
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.isEditable = editable;
+    }
 }
