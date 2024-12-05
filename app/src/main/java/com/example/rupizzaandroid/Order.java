@@ -18,8 +18,11 @@ public class Order {
     // Static counter for generating unique order numbers
     private static int orderCounter = 1;
 
+    private static int nextNum = 1;
     // Unique order number for each order
     private int orderNum;
+
+    private boolean orderPlaced = false;
 
     // List of pizzas in the order
     private ArrayList<Pizza> pizzas = new ArrayList<>();
@@ -97,10 +100,21 @@ public class Order {
      * Adds the order to the static list of all orders placed.
      * This method ensures that only one instance of the order is added.
      */
+    //public void placeOrder() {
+     //   if (!allOrders.contains(this)) {
+      //    allOrders.add(this);  // Add this order to the list of all orders
+      //  }
+      // orderCounter++;
+    //}
     public void placeOrder() {
-        if (!allOrders.contains(this)) {
-            allOrders.add(this);  // Add this order to the list of all orders
+        if (!orderPlaced) {
+            orderPlaced = true;
+            allOrders.add(this);
         }
+    }
+
+    public boolean orderPlaced() {
+        return orderPlaced;
     }
 
     /**

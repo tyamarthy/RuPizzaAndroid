@@ -40,7 +40,9 @@ public class ChicagoActivity extends AppCompatActivity {
 
     private Pizza currPizza;
     private ChicagoPizza chicagoPizzaFactory = new ChicagoPizza();
-    private Order currentOrder;
+    //private Order currentOrder;
+
+    private OrderManager sharedOrder;
 
     private List<Topping> availableToppings = List.of(
             Topping.SAUSAGE, Topping.PEPPERONI, Topping.GREEN_PEPPER,
@@ -56,6 +58,7 @@ public class ChicagoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chicago_activity);
+        sharedOrder=OrderManager.getInstance();
 
         initializeViews();
         setupSpinner();
@@ -325,11 +328,8 @@ public class ChicagoActivity extends AppCompatActivity {
         }
 
         if (currPizza != null) {
-            if (currentOrder == null) {
-                currentOrder = new Order(); // Initialize order if not already done
-            }
-            currentOrder.addAPizza(currPizza);
-            showSuccess("Pizza Added to Order!", "Pizza added successfully!\nTotal pizzas in order: " + currentOrder.getPizzas().size());
+            sharedOrder.addPizza(currPizza);
+            showSuccess("Pizza Added to Order!", "Pizza added successfully!\nTotal pizzas in order: " + sharedOrder.getTotalPizzasInOrder());
             resetFields();
         } else {
             showAlert("Error Adding to Order", "Unable to add this pizza to your order");
@@ -368,7 +368,6 @@ public class ChicagoActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.holo_green_light);
     }
 
-    public void setOrder(Order order) {
-        this.currentOrder = order;
+    //public void setOrder(Order order) {
+      //  this.currentOrder = order;
     }
-}
