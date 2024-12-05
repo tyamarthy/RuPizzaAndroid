@@ -8,19 +8,19 @@ package com.example.rupizzaandroid;
  * @author Tanvi Yamarthy
  */
 public enum Topping {
-    SAUSAGE,
-    PEPPERONI,
-    GREEN_PEPPER,
-    ONION,
-    MUSHROOM,
-    BBQ_CHICKEN,
-    CHEDDAR,
-    PROVOLONE,
-    BEEF,
-    HAM,
-    OLIVES,
-    PINEAPPLES,
-    JALAPENOS;
+    SAUSAGE(R.drawable.sausage),
+    PEPPERONI(R.drawable.pepperoni),
+    GREEN_PEPPER(R.drawable.greenpepper),
+    ONION(R.drawable.onion),
+    MUSHROOM(R.drawable.mushroom),
+    BBQ_CHICKEN(R.drawable.bbqchicken),
+    CHEDDAR(R.drawable.cheddar),
+    PROVOLONE(R.drawable.provolone),
+    BEEF(R.drawable.beef),
+    HAM(R.drawable.ham),
+    OLIVES(R.drawable.olives),
+    PINEAPPLES(R.drawable.pineapple),
+    JALAPENOS(R.drawable.jalapenos);
 
 
     private boolean isSelected = false;
@@ -37,6 +37,16 @@ public enum Topping {
 
     public void toggleSelected() {
         isSelected = !isSelected;
+    }
+
+    private final int imageResId;
+
+    Topping(int imageResId) {
+        this.imageResId = imageResId;
+    }
+
+    public int getImageResId() {
+        return imageResId;
     }
 
 }
