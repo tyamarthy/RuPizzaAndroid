@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,6 @@ public class NewYorkActivity extends AppCompatActivity {
 
     private Pizza currPizza;
     private NYPizza newYorkPizzaFactory = new NYPizza();
-   // private Order currentOrder;
 
     private OrderManager sharedOrder;
 
@@ -58,10 +56,10 @@ public class NewYorkActivity extends AppCompatActivity {
         sharedOrder=OrderManager.getInstance();
 
         initializeViews();
-        setupSpinner();
-        setupRadioButtons();
-        setupRecyclerViews();
-        setupButtons();
+        spinnerSetUp();
+        radioButtonSetUp();
+        recyclerViewSetUp();
+        buttonSetUp();
     }
 
     private void initializeViews() {
@@ -77,7 +75,7 @@ public class NewYorkActivity extends AppCompatActivity {
         orderButton = findViewById(R.id.orderButton);
     }
 
-    private void setupSpinner() {
+    private void spinnerSetUp() {
         String[] pizzaTypes = {"Select Pizza Type...", "Deluxe", "BBQ Chicken", "Meatzza", "Build your own"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, pizzaTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,7 +85,7 @@ public class NewYorkActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedPizzaType = (String) parent.getItemAtPosition(position);
-                updatePizzaSelection(selectedPizzaType);
+                choosingAPizza(selectedPizzaType);
             }
 
             @Override
@@ -95,7 +93,7 @@ public class NewYorkActivity extends AppCompatActivity {
         });
     }
 
-    private void setupRadioButtons() {
+    private void radioButtonSetUp() {
         smallRadioButton.setOnClickListener(v -> {
             mediumRadioButton.setChecked(false);
             largeRadioButton.setChecked(false);
@@ -115,24 +113,20 @@ public class NewYorkActivity extends AppCompatActivity {
         });
     }
 
-    private void setupRecyclerViews() {
+    private void recyclerViewSetUp() {
         availableToppingsAdapter = new ToppingAdapter(availableToppings, topping -> {
-            // Check if the current pizza is "Build Your Own"
             if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
                 if (topping.isSelected()) {
-                    // Deselect topping
                     topping.setSelected(false);
                     selectedToppingsAdapter.removeTopping(topping);
                     currPizza.getToppings().remove(topping);
 
-                    // Reset image if no toppings are selected
                     if (currPizza.getToppings().isEmpty()) {
                         pizzaImageView.setImageResource(R.drawable.buildyourown);
                     }
                 } else {
-                    // Add topping, enforcing the maximum limit
                     if (selectedToppingsAdapter.getItemCount() >= MAX_TOPPINGS_LIMIT) {
-                        showAlert("Toppings Limit Reached", "You are only allowed to select up to " + MAX_TOPPINGS_LIMIT + " toppings.");
+                        showAlert("Maximum Toppings Reached", "The toppings you can choose are limited to a maximum of " + MAX_TOPPINGS_LIMIT);
                         return;
                     }
                     topping.setSelected(true);
@@ -140,25 +134,20 @@ public class NewYorkActivity extends AppCompatActivity {
                     currPizza.addTopping(topping);
                 }
 
-                // Update the image and price specifically for "Build Your Own"
-                updateBuildYourOwnImage();
+                buildYourOwnImages();
                 updatePrice();
                 availableToppingsAdapter.notifyDataSetChanged(); // Refresh the UI
             } else {
-                // Prevent topping selection for non-editable pizzas
-                showAlert("Topping Selection Disabled", "Toppings can only be edited for 'Build Your Own' pizzas.");
+                showAlert("Cannot choose toppings", "You can only choose your own toppings for Build Your Own pizzas.");
             }
         }, imageResId -> {
-            // Only update image if "Build Your Own" is selected
             if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
                 pizzaImageView.setImageResource(imageResId);
             }
         });
 
         selectedToppingsAdapter = new ToppingAdapter(new ArrayList<>(), topping -> {
-            // No direct action for selected toppings adapter in this design
         }, imageResId -> {
-            // Prevent image updates from selected toppings for other pizza types
             if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
                 pizzaImageView.setImageResource(imageResId);
             }
@@ -168,25 +157,21 @@ public class NewYorkActivity extends AppCompatActivity {
         availableToppingsRecyclerView.setAdapter(availableToppingsAdapter);
     }
 
-    private void updateBuildYourOwnImage() {
+    private void buildYourOwnImages() {
         if (currPizza != null && currPizza.getClass().getSimpleName().equals("BuildYourOwn")) {
             List<Topping> selectedToppings = currPizza.getToppings();
 
             if (selectedToppings.isEmpty()) {
-                // No toppings selected, reset to default image
                 pizzaImageView.setImageResource(R.drawable.buildyourown);
             } else {
-                // Show the image for the most recently added topping
                 Topping lastTopping = selectedToppings.get(selectedToppings.size() - 1);
-                int toppingImageResource = getToppingImageResource(lastTopping);
+                int toppingImageResource = toppingsImages(lastTopping);
                 pizzaImageView.setImageResource(toppingImageResource);
             }
         }
     }
 
-
-
-    private int getToppingImageResource(Topping topping) {
+    private int toppingsImages(Topping topping) {
         switch (topping) {
             case SAUSAGE: return R.drawable.sausage;
             case PEPPERONI: return R.drawable.pepperoni;
@@ -205,32 +190,29 @@ public class NewYorkActivity extends AppCompatActivity {
         }
     }
 
-    private void setupButtons() {
+    private void buttonSetUp() {
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        orderButton.setOnClickListener(v -> addPizzaToOrder());
+        orderButton.setOnClickListener(v -> addingAPizza());
     }
 
-    private void updatePizzaSelection(String pizzaType) {
-        // Reset all toppings to unselected and uneditable
+    private void choosingAPizza(String pizzaType) {
         for (Topping topping : availableToppings) {
             topping.setSelected(false);
-            topping.setEditable(false); // Disable editing by default
+            topping.setEditable(false);
         }
         availableToppingsAdapter.notifyDataSetChanged();
 
-        // Clear selected toppings
         selectedToppingsAdapter.clearToppings();
 
-        // Handle pizza selection logic
         switch (pizzaType) {
             case "Deluxe":
                 currPizza = newYorkPizzaFactory.createDeluxe();
-                highlightSpecialtyToppings(List.of(
+                preselectedToppings(List.of(
                         Topping.SAUSAGE, Topping.PEPPERONI, Topping.GREEN_PEPPER,
                         Topping.ONION, Topping.MUSHROOM
                 ));
@@ -239,7 +221,7 @@ public class NewYorkActivity extends AppCompatActivity {
 
             case "BBQ Chicken":
                 currPizza = newYorkPizzaFactory.createBBQChicken();
-                highlightSpecialtyToppings(List.of(
+                preselectedToppings(List.of(
                         Topping.BBQ_CHICKEN, Topping.GREEN_PEPPER,
                         Topping.PROVOLONE, Topping.CHEDDAR
                 ));
@@ -248,7 +230,7 @@ public class NewYorkActivity extends AppCompatActivity {
 
             case "Meatzza":
                 currPizza = newYorkPizzaFactory.createMeatzza();
-                highlightSpecialtyToppings(List.of(
+                preselectedToppings(List.of(
                         Topping.SAUSAGE, Topping.PEPPERONI, Topping.BEEF,
                         Topping.HAM
                 ));
@@ -271,24 +253,23 @@ public class NewYorkActivity extends AppCompatActivity {
 
         crustTextView.setText("Crust: " + (currPizza != null ? currPizza.getCrust() : ""));
 
-        // Reset size and price
         smallRadioButton.setChecked(false);
         mediumRadioButton.setChecked(false);
         largeRadioButton.setChecked(false);
         updatePrice();
     }
 
-    private void highlightSpecialtyToppings(List<Topping> specialtyToppings) {
+    private void preselectedToppings(List<Topping> specialtyToppings) {
         for (Topping topping : availableToppings) {
             if (specialtyToppings.contains(topping)) {
-                topping.setSelected(true); // Preselect these toppings
-                topping.setEditable(false); // Lock these toppings to make them uneditable
-                selectedToppingsAdapter.addTopping(topping); // Show them in the selected toppings list
+                topping.setSelected(true);
+                topping.setEditable(false);
+                selectedToppingsAdapter.addTopping(topping);
             } else {
-                topping.setSelected(false); // Ensure other toppings are not selected
+                topping.setSelected(false);
             }
         }
-        availableToppingsAdapter.notifyDataSetChanged(); // Refresh the UI
+        availableToppingsAdapter.notifyDataSetChanged();
     }
 
     private void updatePrice() {
@@ -311,29 +292,29 @@ public class NewYorkActivity extends AppCompatActivity {
         priceTextView.setText(String.format("$%.2f", price));
     }
 
-    private void addPizzaToOrder() {
+    private void addingAPizza() {
         String selectedPizza = (String) pizzaTypeSpinner.getSelectedItem();
 
         if ("Select Pizza Type...".equals(selectedPizza)) {
-            showAlert("Cannot Add to Order", "Please select your pizza type to proceed");
+            showAlert("Error: Cannot Add Pizza to Order", "You need to select a pizza type before you can add a pizza to the order.");
             return;
         }
 
         if (!(smallRadioButton.isChecked() || mediumRadioButton.isChecked() || largeRadioButton.isChecked())) {
-            showAlert("Cannot Add to Order", "You must select a size for the pizza to proceed");
+            showAlert("Error: Cannot Cannot Add Pizza to Order", "You need to select a pizza size before you can add a pizza to the order.");
             return;
         }
 
         if (currPizza != null) {
             sharedOrder.addPizza(currPizza);
             showSuccess("Pizza Added to Order!", "Pizza added successfully!\nTotal pizzas in order: " + sharedOrder.getTotalPizzasInOrder());
-            resetFields();
+            defaultReset();
         } else {
-            showAlert("Error Adding to Order", "Unable to add this pizza to your order");
+            showAlert("Error Adding to Order", "This pizza is not added to your order.");
         }
     }
 
-    private void resetFields() {
+    private void defaultReset() {
         pizzaTypeSpinner.setSelection(0);
         availableToppingsAdapter.clearToppings();
         availableToppingsAdapter.addAllToppings(availableToppings);

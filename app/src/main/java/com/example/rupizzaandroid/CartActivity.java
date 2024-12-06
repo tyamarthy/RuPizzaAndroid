@@ -2,26 +2,16 @@ package com.example.rupizzaandroid;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class CartActivity extends AppCompatActivity {
 
@@ -40,14 +30,10 @@ public class CartActivity extends AppCompatActivity {
 
     private OrderManager sharedOrder;
     private PizzaAdapter pizzaAdapter;
-    private DecimalFormat df = new DecimalFormat("0.00");
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Link the cart_activity.xml layout file
         setContentView(R.layout.cart_activity);
         Button backButton=findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -61,9 +47,9 @@ public class CartActivity extends AppCompatActivity {
 
         sharedOrder=OrderManager.getInstance();
         initializeViews();
-        setupOrderListView();
-        setupButtonListeners();
-        updateOrderSummary();
+        orderListViewSetUp();
+        buttonListenerSetUp();
+        displayOrderInfo();
     }
 
     private void initializeViews() {
@@ -79,19 +65,19 @@ public class CartActivity extends AppCompatActivity {
         placeOrderButton = findViewById(R.id.btnPlaceOrder);
     }
 
-    private void setupOrderListView() {
+    private void orderListViewSetUp() {
         pizzaAdapter = new PizzaAdapter(this,
                 sharedOrder.getCurrentOrder().getPizzas());
         orderListView.setAdapter(pizzaAdapter);
         orderListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
-    private void setupButtonListeners() {
+    private void buttonListenerSetUp() {
 
-        removePizzaButton.setOnClickListener(v -> removeSelectedPizza());
+        removePizzaButton.setOnClickListener(v -> deletePizzaSelected());
 
         clearOrderButton.setOnClickListener(v -> {
             sharedOrder.clearOrder();
-            updateOrderSummary();
+            displayOrderInfo();
         });
 
         placeOrderButton.setOnClickListener(v -> placeOrder());
@@ -103,12 +89,12 @@ public class CartActivity extends AppCompatActivity {
         });
     }
 
-    private void removeSelectedPizza() {
+    private void deletePizzaSelected() {
         int selectedPosition = orderListView.getCheckedItemPosition();
         if (selectedPosition != ListView.INVALID_POSITION) {
             // Remove pizza at selected position
             sharedOrder.getCurrentOrder().getPizzas().remove(selectedPosition);
-            updateOrderSummary();
+            displayOrderInfo();
         } else {
             showAlert("Error", "No pizza selected to remove.");
         }
@@ -123,12 +109,10 @@ public class CartActivity extends AppCompatActivity {
         sharedOrder.getCurrentOrder().placeOrder();
         showSuccessAlert("Order Placed", "Your order has been placed successfully!");
         sharedOrder.clearOrder();
-        updateOrderSummary();
+        displayOrderInfo();
     }
 
-
-
-    private void updateOrderSummary() {
+    private void displayOrderInfo() {
         ArrayList<Pizza> pizzas = sharedOrder.getCurrentOrder().getPizzas();
         pizzaAdapter = new PizzaAdapter(this,pizzas);
         orderListView.setAdapter(pizzaAdapter);
@@ -161,8 +145,7 @@ public class CartActivity extends AppCompatActivity {
                 .show();
     }
 
-
-    }
+}
 
 
 

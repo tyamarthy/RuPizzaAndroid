@@ -25,20 +25,16 @@ public class PlacedOrdersActivity extends AppCompatActivity {
     private Button backButton;
     private Button cancelOrderButton;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.past_orders_activity); // Make sure to use your XML layout
+        setContentView(R.layout.past_orders_activity);
 
-        // Initialize views
         orderSpinner = findViewById(R.id.spinner);
         orderDetailsListView = findViewById(R.id.orderList);
         orderTotalTextView = findViewById(R.id.orderAmount);
         backButton = findViewById(R.id.backButton);
         cancelOrderButton = findViewById(R.id.btnCancelOrder);
-
 
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(PlacedOrdersActivity.this, MainActivity.class);
@@ -47,15 +43,15 @@ public class PlacedOrdersActivity extends AppCompatActivity {
         });
 
 
-        populateOrderSpinner();
+        orderSpinnerValues();
 
         orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 int selectedOrderNumber = Integer.parseInt(orderSpinner.getSelectedItem().toString());
-                Order selectedOrder = findOrderByNumber(selectedOrderNumber);
+                Order selectedOrder = orderNumberDropdown(selectedOrderNumber);
                 if (selectedOrder != null) {
-                    displayOrderDetails(selectedOrder);
+                    orderDetailsSummary(selectedOrder);
                 }
             }
 
@@ -65,10 +61,10 @@ public class PlacedOrdersActivity extends AppCompatActivity {
             }
         });
 
-        cancelOrderButton.setOnClickListener(v -> cancelSelectedOrder());
+        cancelOrderButton.setOnClickListener(v -> cancellationUserSelectedOrder());
     }
 
-    private void populateOrderSpinner() {
+    private void orderSpinnerValues() {
         ArrayList<Order> allOrders = Order.getAllOrders();
         ArrayList<String> orderNumbers = new ArrayList<>();
 
@@ -81,7 +77,7 @@ public class PlacedOrdersActivity extends AppCompatActivity {
         orderSpinner.setAdapter(adapter);
     }
 
-    private Order findOrderByNumber(int orderNumber) {
+    private Order orderNumberDropdown(int orderNumber) {
         ArrayList<Order> allOrders = Order.getAllOrders();
         for (Order order : allOrders) {
             if (order.getOrderNum() == orderNumber) {
@@ -91,7 +87,7 @@ public class PlacedOrdersActivity extends AppCompatActivity {
         return null;
     }
 
-    private void displayOrderDetails(Order order) {
+    private void orderDetailsSummary(Order order) {
         PizzaAdapter pizzaAdapter = new PizzaAdapter(this, order.getPizzas());
         orderDetailsListView.setAdapter(pizzaAdapter);
         double subtotal = 0;
@@ -104,7 +100,7 @@ public class PlacedOrdersActivity extends AppCompatActivity {
         orderTotalTextView.setText(String.format("$%.2f", total));
     }
 
-    private void cancelSelectedOrder() {
+    private void cancellationUserSelectedOrder() {
 
         if(orderSpinner.getCount()==0||orderSpinner.getAdapter()==null){
             showAlert("Error","At the time there are no orders available to be cancelled");
@@ -113,19 +109,18 @@ public class PlacedOrdersActivity extends AppCompatActivity {
 
         String orderString=orderSpinner.getSelectedItem().toString();
         if(orderString==null || orderString.isEmpty()){
-            showAlert("Error","Please select an order to cancel");
+            showAlert("Error","Please select a order before you can cancel it.");
         }
 
         int selectedOrderNumber = Integer.parseInt(orderSpinner.getSelectedItem().toString());
-        Order selectedOrder = findOrderByNumber(selectedOrderNumber);
+        Order selectedOrder = orderNumberDropdown(selectedOrderNumber);
 
         if (selectedOrder != null) {
             Order.getAllOrders().remove(selectedOrder);
-            populateOrderSpinner();
+            orderSpinnerValues();
             orderDetailsListView.setAdapter(null);
             orderTotalTextView.setText("$0.00");
 
-            // Show confirmation
             Toast.makeText(this, "Order " + selectedOrderNumber + "is now cancelled!", Toast.LENGTH_SHORT).show();
         } else {
             showAlert("Error", "No order found to cancel.");
@@ -133,14 +128,6 @@ public class PlacedOrdersActivity extends AppCompatActivity {
     }
 
     private void showAlert(String title, String message) {
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
-    }
-
-    private void showSuccessAlert(String title, String message) {
         new AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
