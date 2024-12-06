@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import android.widget.Toast;
 
 public class PlacedOrdersActivity extends AppCompatActivity {
 
@@ -23,6 +24,8 @@ public class PlacedOrdersActivity extends AppCompatActivity {
     private TextView orderTotalTextView;
     private Button backButton;
     private Button cancelOrderButton;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +39,16 @@ public class PlacedOrdersActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         cancelOrderButton = findViewById(R.id.btnCancelOrder);
 
-        // Set up back button
+
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(PlacedOrdersActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         });
 
-        // Populate the spinner with order numbers
+
         populateOrderSpinner();
 
-        // Set up spinner selection listener
         orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -59,11 +61,10 @@ public class PlacedOrdersActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Handle case when nothing is selected (optional)
+
             }
         });
 
-        // Set up cancel order button
         cancelOrderButton.setOnClickListener(v -> cancelSelectedOrder());
     }
 
@@ -93,8 +94,6 @@ public class PlacedOrdersActivity extends AppCompatActivity {
     private void displayOrderDetails(Order order) {
         PizzaAdapter pizzaAdapter = new PizzaAdapter(this, order.getPizzas());
         orderDetailsListView.setAdapter(pizzaAdapter);
-
-        // Calculate and display the total with tax
         double subtotal = 0;
         for (Pizza pizza : order.getPizzas()) {
             subtotal += pizza.price();
@@ -106,22 +105,28 @@ public class PlacedOrdersActivity extends AppCompatActivity {
     }
 
     private void cancelSelectedOrder() {
+
+        if(orderSpinner.getCount()==0||orderSpinner.getAdapter()==null){
+            showAlert("Error","At the time there are no orders available to be cancelled");
+            return;
+        }
+
+        String orderString=orderSpinner.getSelectedItem().toString();
+        if(orderString==null || orderString.isEmpty()){
+            showAlert("Error","Please select an order to cancel");
+        }
+
         int selectedOrderNumber = Integer.parseInt(orderSpinner.getSelectedItem().toString());
         Order selectedOrder = findOrderByNumber(selectedOrderNumber);
 
         if (selectedOrder != null) {
-            // Remove the selected order from the list
             Order.getAllOrders().remove(selectedOrder);
-
-            // Update the spinner
             populateOrderSpinner();
-
-            // Clear order details from the UI
             orderDetailsListView.setAdapter(null);
             orderTotalTextView.setText("$0.00");
 
             // Show confirmation
-            showSuccessAlert("Order Cancelled", "The selected order has been cancelled.");
+            Toast.makeText(this, "Order " + selectedOrderNumber + "is now cancelled!", Toast.LENGTH_SHORT).show();
         } else {
             showAlert("Error", "No order found to cancel.");
         }
