@@ -1,5 +1,61 @@
 <resources>
     <string name="app_name">Ru Pizza</string>
+
+    <!-- Main Activity Strings -->
+    <string name="main_activity_welcome_text">Welcome to RuPizzeria!</string>
+    <string name="main_activity_new_york_pizza">New York Pizza</string>
+    <string name="main_activity_chicago_pizza">Chicago Pizza</string>
+    <string name="main_activity_shopping_cart">Shopping Cart</string>
+    <string name="main_activity_view_past_orders">View Past Orders</string>
+
+    <!-- Cart Activity Strings -->
+    <string name="cart_activity_shopping_cart">Your Shopping Cart</string>
+    <string name="cart_activity_back">Back</string>
+    <string name="cart_activity_order_num">Order Number:</string>
+    <string name="cart_activity_id_num">0</string>
+    <string name="cart_activity_subtotal">Subtotal$ :</string>
+    <string name="cart_activity_subtotal_amt">$0.00</string>
+    <string name="cart_activity_sales_tax">Sales Tax $:</string>
+    <string name="cart_activity_order_total">Order Total $:</string>
+    <string name="cart_activity_remove_pizza">Remove Pizza</string>
+    <string name="cart_activity_clear_order">Clear Order</string>
+    <string name="cart_activity_place_order">Place Order</string>
+
+    <!-- Chicago Activity Strings -->
+    <string name="chicago_activity_back">Back</string>
+    <string name="chicago_activity_select_label">Select Your Chicago Pizza</string>
+    <string name="chicago_activity_pizza_image">Pizza Image</string>
+    <string name="chicago_activity_crust">Crust: Thin</string>
+    <string name="chicago_activity_small">Small</string>
+    <string name="chicago_activity_medium">Medium</string>
+    <string name="chicago_activity_large">Large</string>
+    <string name="chicago_activity_toppings">Available Toppings:</string>
+    <string name="chicago_activity_price">Price:</string>
+    <string name="chicago_activity_subtotal_amt">$0.00</string>
+    <string name="chicago_activity_order">Order</string>
+
+    <!-- New York Activity Strings -->
+    <string name="ny_activity_back">Back</string>
+    <string name="ny_activity_select_label">Select Your New York Pizza</string>
+    <string name="ny_activity_pizza_image">Pizza Image</string>
+    <string name="ny_activity_crust">Crust: Thin</string>
+    <string name="ny_activity_small">Small</string>
+    <string name="ny_activity_medium">Medium</string>
+    <string name="ny_activity_large">Large</string>
+    <string name="ny_activity_toppings">Available Toppings:</string>
+    <string name="ny_activity_price">Price:</string>
+    <string name="ny_activity_subtotal_amt">$0.00</string>
+    <string name="ny_activity_order">Order</string>
+
+    <!-- Past Orders Activity Strings -->
+    <string name="past_orders_activity_label">All Store Orders</string>
+    <string name="past_orders_back">Back</string>
+    <string name="past_orders_order_num">Order Number:</string>
+    <string name="past_orders_order_totalTax">Order Total w/ Tax:</string>
+    <string name="past_orders_subtotal_amt">$0.00</string>
+    <string name="past_orders_cancel_order">Cancel Order</string>
+    <string name="past_orders_place_order">Place Order</string>
+
     <string-array name="pizza_specialties">
         <item>New York Pizza</item>
         <item>Chicago Pizza</item>
@@ -11,8 +67,6 @@
         <item>Meatzza</item>
         <item>Build Your Own</item>
     </string-array>
-
-
 
     <string-array name="toppings">
         <item>Sausage</item>
@@ -29,5 +83,4 @@
         <item>Pineapple</item>
         <item>Jalapenos</item>
     </string-array>
-
 </resources>

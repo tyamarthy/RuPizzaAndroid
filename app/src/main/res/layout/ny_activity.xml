@@ -13,7 +13,7 @@
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Back"
+            android:text="@string/ny_activity_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Select Your New York Pizza"
+            android:text="@string/ny_activity_select_label"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginTop="16dp"
-            android:contentDescription="Pizza image"
+            android:contentDescription="@string/ny_activity_pizza_image"
             android:src="@drawable/pinkpizza"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +53,7 @@
             android:id="@+id/crustTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Crust: Thin"
+            android:text="@string/ny_activity_crust"
             android:textSize="16sp"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
@@ -75,19 +75,19 @@
                 android:id="@+id/radioSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Small" />
+                android:text="@string/ny_activity_small" />
 
             <RadioButton
                 android:id="@+id/radioMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Medium" />
+                android:text="@string/ny_activity_medium" />
 
             <RadioButton
                 android:id="@+id/radioLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Large" />
+                android:text="@string/ny_activity_large" />
         </RadioGroup>
 
         <TextView
@@ -95,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Available Toppings:"
+            android:text="@string/ny_activity_toppings"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +115,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Price:"
+            android:text="@string/ny_activity_price"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,7 +126,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="$0.00"
+            android:text="@string/ny_activity_subtotal_amt"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -138,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="Order"
+            android:text="@string/ny_activity_order"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/priceTextView" />

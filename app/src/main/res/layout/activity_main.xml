@@ -20,7 +20,7 @@
         android:shadowDx="2"
         android:shadowDy="2"
         android:shadowRadius="4"
-        android:text="Welcome to RuPizzeria!"
+        android:text="@string/main_activity_welcome_text"
         android:textColor="#E91E63"
         android:textColorLink="@color/black"
         android:textSize="32sp"
@@ -54,7 +54,7 @@
             android:layout_width="165dp"
             android:layout_height="48dp"
             android:backgroundTint="#E91E63"
-            android:text="New York Pizza"
+            android:text="@string/main_activity_new_york_pizza"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -65,7 +65,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="#E91E63"
-            android:text="Chicago Pizza"
+            android:text="@string/main_activity_chicago_pizza"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button" />
@@ -76,7 +76,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="#E91E63"
-            android:text="Shopping Cart"
+            android:text="@string/main_activity_shopping_cart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button2" />
@@ -87,7 +87,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="#E91E63"
-            android:text="View Past Orders"
+            android:text="@string/main_activity_view_past_orders"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/button3" />
